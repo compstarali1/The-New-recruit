@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zoe Interface</title><style>
+body{margin:0;overflow:hidden;font-family:Segoe UI;background:#000;color:white;}
+
+.bg{position:fixed;width:100%;height:100%;background:url('images/heidi.gif') center/cover no-repeat;opacity:0.4;z-index:0;}
+
+.title{
+    position:absolute;
+    top:20px;
+    width:100%;
+    text-align:center;
+    font-size:40px;
+    font-weight:bold;
+    letter-spacing:3px;
+    background:linear-gradient(90deg,#ff00cc,#3333ff,#ff00cc);
+    -webkit-background-clip:text;
+    color:transparent;
+    animation:glow 3s infinite alternate;
+    z-index:3;
+}
+
+@keyframes glow{
+    from{text-shadow:0 0 10px rgba(255,0,200,0.4)}
+    to{text-shadow:0 0 30px rgba(0,150,255,0.9)}
+}
+
+.star{position:absolute;width:2px;height:2px;background:white;animation:float 6s linear infinite;}
+@keyframes float{0%{transform:translateY(100vh);opacity:0}50%{opacity:1}100%{transform:translateY(-10vh);opacity:0}}
+
+.container{
+    position:absolute;
+    left:2%;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    z-index:2;
+}
+
+button{
+    width:25vw;
+    height:25vw;
+    max-width:140px;
+    max-height:140px;
+    border:none;
+    border-radius:25px;
+    color:white;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    backdrop-filter:blur(14px);
+    background:linear-gradient(145deg,rgba(255,255,255,0.15),rgba(0,0,0,0.6));
+    box-shadow:
+        0 20px 50px rgba(0,0,0,0.9),
+        inset 0 0 25px rgba(255,255,255,0.15),
+        inset 0 -10px 20px rgba(0,0,0,0.6);
+    animation:floatBtn 4s ease-in-out infinite;
+}
+
+button::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.25),transparent);
+    opacity:0.4;
+}
+
+button img{
+    width:80%;
+    height:80%;
+    object-fit:cover;
+    display:block;
+    margin:auto;
+    border-radius:15px;
+}
+
+.label{
+    position:absolute;
+    bottom:5px;
+    width:100%;
+    text-align:center;
+    font-size:12px;
+}
+
+@keyframes floatBtn{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+
+#controls{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:80%;
+    z-index:3;
+}
+
+#progress,#progress2{flex:1;}
+
+/* Enhanced Stop Button */
+.stopMain{
+    position:fixed;
+    bottom:20px;
+    left:10px;
+    width:80px;
+    height:80px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:bold;
+    letter-spacing:1px;
+    backdrop-filter:blur(16px);
+    background:linear-gradient(145deg,rgba(255,0,80,0.7),rgba(0,0,0,0.8));
+    box-shadow:
+        0 25px 70px rgba(0,0,0,1),
+        inset 0 0 30px rgba(255,255,255,0.2),
+        inset 0 -10px 25px rgba(0,0,0,0.8);
+    z-index:4;
+}
+
+.stopMain:hover{
+    transform:scale(1.1);
+    box-shadow:0 30px 90px rgba(255,0,0,0.8);
+}
+
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:none;justify-content:center;align-items:center;z-index:5;}
+.modal iframe{width:90%;height:90%;border:none;border-radius:15px;}
+.close{position:absolute;top:20px;right:20px;color:white;font-size:30px;cursor:pointer;}
+</style></head><body>
+<div class="bg"></div>
+<div class="title">Awakening Zoe</div><script>
+for(let i=0;i<80;i++){
+    let s=document.createElement('div');
+    s.className='star';
+    s.style.left=Math.random()*100+'%';
+    s.style.animationDuration=(3+Math.random()*5)+'s';
+    document.body.appendChild(s);
+}
+</script><div class="container"><button onclick="playAudio()">
+    <img src="images/zoe.png">
+    <div class="label">Awakening Zoe</div>
+</button><button onclick="playAudio2()">
+    <img src="images/ali.png">
+    <div class="label">Missing-You Syndrome</div>
+</button><button onclick="openModal('zoe.html')"></button>
+
+<button onclick="openModal('ali.html')">
+    <img src="images/heidi.png">
+</button></div><div id="controls">
+    <input type="range" id="progress" value="0" step="1">
+    <input type="range" id="progress2" value="0" step="1">
+</div><button class="stopMain" onclick="stopAll()">STOP</button>
+
+<div class="modal" id="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <iframe id="frame"></iframe>
+</div><audio id="audio" src="zoe.mp3"></audio> <audio id="audio2" src="missing.mp3"></audio>
+
+<script>
+let audio=document.getElementById('audio');
+let progress=document.getElementById('progress');
+let audio2=document.getElementById('audio2');
+let progress2=document.getElementById('progress2');
+
+function playAudio(){audio.play();}
+function playAudio2(){audio2.play();}
+
+function stopAll(){
+    audio.pause();audio.currentTime=0;
+    audio2.pause();audio2.currentTime=0;
+}
+
+audio.ontimeupdate=function(){progress.max=audio.duration;progress.value=audio.currentTime;}
+progress.oninput=function(){audio.currentTime=progress.value;}
+
+audio2.ontimeupdate=function(){progress2.max=audio2.duration;progress2.value=audio2.currentTime;}
+progress2.oninput=function(){audio2.currentTime=progress2.value;}
+
+function openModal(page){
+    document.getElementById('modal').style.display='flex';
+    document.getElementById('frame').src=page;
+}
+
+function closeModal(){
+    document.getElementById('modal').style.display='none';
+    document.getElementById('frame').src='';
+}
+</script></body>
+</html>
